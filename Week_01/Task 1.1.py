@@ -41,4 +41,3 @@ while True:
         move_left()
     if button2.value() == 0:  # SW2 pressed
         move_right()
-
