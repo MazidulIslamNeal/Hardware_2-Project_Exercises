@@ -23,7 +23,8 @@ while True:
     user_input = input("Enter text: ")
     lines.append(user_input)
     draw_text(lines)
-    if len(lines) * 9 > oled_height:
+    #print(len(lines)*8)
+    if len(lines) * 8 >= oled_height:
         del lines[0]
     
     time.sleep(0.1)  
