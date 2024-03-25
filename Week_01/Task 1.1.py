@@ -14,13 +14,13 @@ ufo_x = WIDTH // 2
 ufo_y = HEIGHT - 10
 
 # Function to move UFO left
-def move_left():
+def move_right():
     global ufo_x
     if ufo_x > 0:
         ufo_x -= 1
 
 # Function to move UFO right
-def move_right():
+def move_left():
     global ufo_x
     if ufo_x < WIDTH - 8*3:
         ufo_x += 1
