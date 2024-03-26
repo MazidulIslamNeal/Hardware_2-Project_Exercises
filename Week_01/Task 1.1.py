@@ -10,7 +10,7 @@ button1 = Pin(9, Pin.IN, Pin.PULL_UP)
 button2 = Pin(7, Pin.IN, Pin.PULL_UP)
 
 # Define initial UFO position
-ufo_x = WIDTH // 2
+ufo_x = WIDTH // 2-14
 ufo_y = HEIGHT - 10
 
 # Function to move UFO left
