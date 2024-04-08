@@ -31,7 +31,7 @@ for _ in range(2572):
         slope = (
                     sample - previous_datapoint)  # we do not need the exact slope, we just need the sign. that is why I am not deviding with x values
 
-        if previous_slop_sign > 0 and slope < 0:
+        if previous_slop_sign >= 0 and slope < 0:
             peak_count = peak_count + 1
             if peak_store_count == 0:
                 peak1_time = current_time
