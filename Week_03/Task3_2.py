@@ -8,10 +8,6 @@ HEIGHT = 64
 i2c = machine.I2C(1, scl=machine.Pin(15), sda=machine.Pin(14), freq=400000)
 oled = ssd1306.SSD1306_I2C(WIDTH, HEIGHT, i2c)
 
-# Define initial UFO position
-ufo_x = 0
-ufo_y = 0
-
 
 class Encoder:
     def __init__(self, rot_a, rot_b):
