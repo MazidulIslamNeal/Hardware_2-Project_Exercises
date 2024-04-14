@@ -15,6 +15,8 @@ interval_between_data_points = 4  # as 250 samples is in one second so there wil
 
 current_time = 0
 
+peaks = []
+
 peak1_time = 0
 peak2_time = 0
 peak3_time = 0
@@ -33,32 +35,23 @@ for _ in range(2572):
 
         if previous_slop_sign >= 0 and slope < 0:
             peak_count = peak_count + 1
-            if peak_store_count == 0:
-                peak1_time = current_time
-                peak1_sample = sample
-                peak_store_count = 1
-            elif peak_store_count == 1:
-                peak2_time = current_time
-                peak2_sample = sample
-                peak_store_count = 2
-            elif peak_store_count == 2:
-                peak3_time = current_time
-                peak3_sample = sample
-                peak_store_count = 3
+
+            if (len(peaks) < 3):
+                peaks.append((current_time, sample))
 
     # Update Data
     current_time = current_time + interval_between_data_points
     previous_datapoint = sample
     previous_slop_sign = slope
 
-peak_frequency = 1 / ((peak2_time - peak1_time) / 1000)
+peak_frequency = 1 / ((peaks[1][0] - peaks[0][0]) / 1000)
 
 print("Total peak count: ", peak_count, "\n")
 
 print("First three peaks: ")
 
-print(peak1_time, " ms : ", peak1_sample)
-print(peak2_time, " ms : ", peak2_sample)
-print(peak3_time, " ms : ", peak3_sample, "\n")
+for peak in peaks:
+    print(f"{peak[0]} ms : {peak[1]}")
 
-print("Signal Frequency: ", peak_frequency, "Hz")
+print("\nSignal Frequency: ", peak_frequency, "Hz")
+
