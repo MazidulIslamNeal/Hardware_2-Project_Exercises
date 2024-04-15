@@ -22,6 +22,7 @@ rot = Encoder(10, 11)
 
 brightness = 0
 led_on = False
+prev_toggle_button_state = True  # Assuming the button is initially not pressed
 
 while True:
     if rot.fifo.has_data() and led_on:
@@ -32,18 +33,23 @@ while True:
         elif brightness > 10:
             brightness = 10
 
-    if not toggle_button.value():
-        led_on = True
-        brightness = 1  # initial brightness
+    current_toggle_button_state = toggle_button.value()
+    if current_toggle_button_state != prev_toggle_button_state and current_toggle_button_state == 0:
+        # Toggle button was pressed
+        led_on = not led_on
+        if led_on:
+            brightness = 1  # Turn on LED with initial brightness
+        else:
+            brightness = 0  # Turn off LED
+
+    prev_toggle_button_state = current_toggle_button_state
 
     if led_on:
         for _ in range(brightness):
             led.on()
             sleep_ms(1)
             led.off()
-            sleep_ms(10 - brightness) 
-
+            sleep_ms(10 - brightness)
 
     sleep_ms(10)
-
 
