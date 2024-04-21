@@ -8,10 +8,6 @@ HEIGHT = 64
 i2c = machine.I2C(1, scl=machine.Pin(15), sda=machine.Pin(14), freq=400000)
 oled = ssd1306.SSD1306_I2C(WIDTH, HEIGHT, i2c)
 
-# Define initial UFO position
-ufo_x = 0
-ufo_y = 0
-
 
 class Encoder:
     def __init__(self, rot_a, rot_b):
@@ -28,14 +24,23 @@ class Encoder:
 
 
 def generate_led_status(led_number, is_selected, status):
-    led_line = ""
+    led_line = ""  # blank string
 
     if is_selected:
         led_line += "["
     else:
         led_line += " "
 
-    led_line += " LED{} - {}".format(led_number, " ON" if status else "OFF")
+    status_string = ""
+
+    if status:
+        status_string = " ON"
+    else:
+        status_string = "OFF"
+
+    inner_string = " LED{} - {}"
+
+    led_line += inner_string.format(led_number, status_string)
 
     if is_selected:
         led_line += " ]"
@@ -46,8 +51,14 @@ def generate_led_status(led_number, is_selected, status):
 button = Pin(12, mode=Pin.IN, pull=Pin.PULL_UP)
 
 led0 = Pin(22, Pin.OUT)
+
 led1 = Pin(21, Pin.OUT)
+
 led2 = Pin(20, Pin.OUT)
+
+led0.off()
+led1.off()
+led2.off()
 
 led_array = [led0, led1, led2]
 
@@ -63,23 +74,30 @@ while True:
     if selected_delay > 0:
         selected_delay = selected_delay - 1
 
+    # ---- Only for print nothing else
     # Clear the display
     oled.fill(0)
 
     for i in range(3):
-        oled.text(generate_led_status(i + 1, i == selected, led_status[i]), 1, 1 + i * 12)
+        oled.text(generate_led_status(i + 1, i == selected, led_status[i]), 0, i * 18)
 
     # Show on OLED
     oled.show()
+    # ------ Only for Print
 
+    # ---- Only for changing selection internally. In the print section it will be used to show the selection in LED
     if rot.fifo.has_data():
         rotation = rot.fifo.get()
         selected = selected + rotation
         if selected < 0:
-            selected = 2
-        if selected > 2:
+            # selected = 2
             selected = 0
+        if selected > 2:
+            # selected = 0
+            selected = 2
+    # ---- Only for changing selection internally.
 
+    # ---- Only for turning on the LED of and on and Changing the Led_status OFF and ON for display in next cycle
     if button.value() == 0 and selected_delay <= 0:
         selected_delay = 10
         led_status[selected] = not led_status[selected]
@@ -87,3 +105,4 @@ while True:
             led_array[selected].on()
         else:
             led_array[selected].off()
+
