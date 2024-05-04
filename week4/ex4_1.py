@@ -3,7 +3,7 @@ from filefifo import Filefifo
 
 previous_slop_sign = 0
 
-file_path = "capture01_250Hz.txt"
+file_path = "capture03_250Hz.txt"
 
 data = Filefifo(10, name=file_path)
 
@@ -70,8 +70,8 @@ for _ in range(25931):
                 previous_slop_sign = slope
 
         calculation_frame = []
-        calculation_frame_max == None
-        calculation_frame_min == None
+        calculation_frame_max = None
+        calculation_frame_min = None
         frame_peaks = []
 
     # Update Data

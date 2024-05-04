@@ -17,28 +17,28 @@ y = oled_height // 2
 
 
 while True:
-    
-    x += 1
-    if x == oled_width :
-        x = 0  
 
-    
+     x += 1
+     if x == oled_width :
+         x = 0
 
-    if button_sw1.value() == 0:
-        y -= 1
-        if y < 0:
-            y = 0
-    if button_sw2.value() == 0:
-        y += 1
-        if y >= oled_height:
-            y = oled_height - 1 
-    
 
- 
-    if not button_sw3():
-        oled.fill(0)
-        x = 0
-        y = oled_height // 2
+
+     if button_sw1.value() == 0:
+         y -= 1
+         if y < 0:
+             y = 0
+     if button_sw2.value() == 0:
+         y += 1
+         if y >= oled_height:
+             y = oled_height - 1
+
+
+
+     if not button_sw3():
+         oled.fill(0)
+         x = 0
+         y = oled_height // 2
         
 
     oled.pixel(x,y,1)
