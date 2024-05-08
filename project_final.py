@@ -9,10 +9,12 @@ import urequests as requests
 import ujson
 from time import sleep
 from umqtt.simple import MQTTClient
+import mip
 
 
-interval_between_data_points = 50
-sample_count_between_30_seconds = 30000 / interval_between_data_points
+interval_between_data_points = 40 # in ms
+sample_count_between_30_seconds = 30000 / interval_between_data_points # total 600 samples
+
 
 WIFI_NAME="KMD652_Group_11"
 WIFI_PASS="Group_11_FSM"
@@ -21,7 +23,7 @@ WIFI_PASS="Group_11_FSM"
 #MQTT_BROKER = "mqtt-dashboard.com"
 #MQTT_TOPIC = "HRV_DATA"
 #MQTT_CLIENT_ID = "RPI_PICO_GROUP_11"
-MQTT_BROKER = "192.168.11.253" #give me the mqtt server public ip address
+MQTT_BROKER = "192.168.11.253" #provide the mqtt server  ip address
 MQTT_TOPIC = "pico/test" #provide the topic
 MQTT_CLIENT_ID = "KMD652_Group_11"
 
@@ -197,7 +199,7 @@ def calculate_hrv(PPI_ARRAY, BPM_ARRAY):
     
     ppi_sum = 0
     bpm_sum = 0
-    
+
     for i in range(len(PPI_ARRAY)):
         ppi_sum += PPI_ARRAY[i]
         bpm_sum += BPM_ARRAY[i]
@@ -284,11 +286,20 @@ def process_data_for_latest_30_second(is_kubios):
             previous_datapoint = value
             previous_slop_sign = slope
  
+ 
+ 
+    if len(PPI_ARRAY) == 0:
+        display_centered_message("Unable to", "collect enough", "usable data")
+        time.sleep(2)
+        display_centered_message("Please adjust", "finger your", "and", "try again!")
+        HRV_calculated = True
+        return
+    
             
     if not is_kubios:
         hrv_data = calculate_hrv(PPI_ARRAY,BPM_ARRAY)
-        push_to_history(hrv_data)
         
+        push_to_history(hrv_data)
         if connect_to_internet():
             send_to_mqtt(hrv_data)
         
@@ -377,7 +388,6 @@ def operation_1_HR():
     global current_time_plot
     
     if HR_measure_started == False:        
-        display_centered_message("START","MEASUREMENT","BY PRESSING","THE BUTTON")
         current_time_plot = 0
     else:
         calculate_running_data()
@@ -386,10 +396,10 @@ def operation_1_HR():
 HRV_calculated = False
 def operation_2_3_HRV(is_kubios):
     global current_time        
- 
+    
     if HRV_calculated:
         return
-    sample = get_data(50)
+    sample = get_data(interval_between_data_points)
 
     remaining = 0
     
@@ -401,7 +411,8 @@ def operation_2_3_HRV(is_kubios):
     else:
         calculation_frame.append((current_time, sample))
         remaining = (30000-frame_length*interval_between_data_points)
-        display_centered_message("Collecting ...",str(remaining//1000))   # remaining mili second to second conversion
+        if remaining%1000 ==0:
+            display_centered_message("Collecting ...",str(remaining//1000))   # remaining mili second to second conversion
             
 
     # Update Data
