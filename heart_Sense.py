@@ -9,7 +9,6 @@ import urequests as requests
 import ujson
 from time import sleep
 from umqtt.simple import MQTTClient
-import mip
 
 
 interval_between_data_points = 40 # in ms
@@ -20,10 +19,7 @@ WIFI_NAME="KMD652_Group_11"
 WIFI_PASS="Group_11_FSM"
 
 
-#MQTT_BROKER = "mqtt-dashboard.com"
-#MQTT_TOPIC = "HRV_DATA"
-#MQTT_CLIENT_ID = "RPI_PICO_GROUP_11"
-MQTT_BROKER = "192.168.11.253" #provide the mqtt server  ip address
+MQTT_BROKER = "192.168.11.253" #provide the mqtt server ip address
 MQTT_TOPIC = "pico/test" #provide the topic
 MQTT_CLIENT_ID = "KMD652_Group_11"
 
@@ -44,7 +40,7 @@ hr_sensor =  ADC(Pin(26, Pin.IN))
     
 def get_data(delay=0):
     if delay >0:
-        time.sleep(delay/1000)
+        time.sleep(delay/1000) #converting ms to second
     
     return hr_sensor.read_u16()
 
@@ -332,7 +328,7 @@ def calculate_running_data():
                 slope = (sample - previous_sample)
                 if previous_slop_sign_running >= 0 and slope < 0:
                     ppi = current_time_plot - previous_peak_time_plot
-                    if ppi >= 250 and ppi <= 2000:    # 30- 240 HR otherwise invalid 
+                    if ppi >= 250 and ppi <= 2000:    # 30- 240 HR, otherwise invalid 
                         bpm = int(60000 / ((ppi)))
 
                     previous_peak_time_plot = current_time_plot  # Storing for next calculation
